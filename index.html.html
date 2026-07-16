@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema de Predicación Pública</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @media print {
+      .no-print { display: none !important; }
+      body { background: white; color: black; }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col font-sans">
+
+  <!-- ENCABEZADO -->
+  <header class="bg-blue-700 text-white shadow-md no-print">
+    <div class="max-w-7xl mx-auto px-4 py-5 flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div class="flex items-center gap-3">
+        <i data-lucide="shield" class="w-8 h-8 text-blue-200"></i>
+        <div>
+          <h1 class="text-2xl font-bold tracking-tight">Predicación Congregación Joya Oeste</h1>
+          <p class="text-sm text-blue-100">Portal de Solicitudes y Consulta de Horarios Oficiales</p>
+        </div>
+      </div>
+      <div class="flex gap-2">
+        <!-- Botón Administrador -->
+        <button id="btn-modo-admin" onclick="mostrarModalLogin()" class="bg-blue-800 hover:bg-blue-900 border border-blue-600 px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-all text-sm shadow-sm">
+          <i data-lucide="lock" class="w-4 h-4 text-blue-300"></i> <span id="texto-modo-admin">Modo Administrador</span>
+        </button>
+        <button onclick="window.print()" class="bg-blue-900 hover:bg-blue-950 px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-all text-sm shadow-sm">
+          <i data-lucide="printer" class="w-4 h-4 text-blue-300"></i> Imprimir PDF
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+    
+    <!-- COLUMNA IZQUIERDA: FORMULARIO DE SOLICITUD / REGISTRO (5 columnas) -->
+    <section class="lg:col-span-5 space-y-6 no-print">
+      <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+        <div class="flex items-center gap-2 mb-2 border-b border-slate-100 pb-3">
+          <i data-lucide="mail" class="text-blue-600 w-6 h-6"></i>
+          <div>
+            <h2 class="text-lg font-bold text-slate-800">Enviar Solicitud de Turno</h2>
+            <p class="text-xs text-slate-400">Los datos se enviarán para revisión antes de ser publicados.</p>
+          </div>
+        </div>
+        
+        <!-- INTEGRACIÓN CON FORMSPREE -->
+        <form id="form-solicitud" action="https://formspree.io/f/TU_ENDPOINT_DE_FORMSPREE_AQUÍ" method="POST" class="space-y-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">Nombre Completo *</label>
+            <input type="text" name="Nombre" required class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none" placeholder="Ej. Martha de Rivera">
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">Teléfono de Contacto *</label>
+            <input type="tel" name="Teléfono" required class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none" placeholder="Ej. 0999999999">
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-500 uppercase mb-2">Días Disponibles *</label>
+            <div class="grid grid-cols-3 gap-2">
+              <label class="flex items-center gap-1.5 p-2 bg-slate-50 rounded-lg border border-slate-100 cursor-pointer text-xs hover:bg-blue-50">
+                <input type="checkbox" name="Días[]" value="Lunes" class="rounded text-blue-600"> Lunes
+              </label>
+              <label class="flex items-center gap-1.5 p-2 bg-slate-50 rounded-lg border border-slate-100 cursor-pointer text-xs hover:bg-blue-50">
+                <input type="checkbox" name="Días[]" value="Martes" class="rounded text-blue-600"> Martes
+              </label>
+              <label class="flex items-center gap-1.5 p-2 bg-slate-50 rounded-lg border border-slate-100 cursor-pointer text-xs hover:bg-blue-50">
+                <input type="checkbox" name="Días[]" value="Miércoles" class="rounded text-blue-600"> Mié
+              </label>
+              <label class="flex items-center gap-1.5 p-2 bg-slate-50 rounded-lg border border-slate-100 cursor-pointer text-xs hover:bg-blue-50">
+                <input type="checkbox" name="Días[]" value="Jueves" class="rounded text-blue-600"> Jueves
+              </label>
+              <label class="flex items-center gap-1.5 p-2 bg-slate-50 rounded-lg border border-slate-100 cursor-pointer text-xs hover:bg-blue-50">
+                <input type="checkbox" name="Días[]" value="Viernes" class="rounded text-blue-600"> Vie
+              </label>
+              <label class="flex items-center gap-1.5 p-2 bg-slate-50 rounded-lg border border-slate-100 cursor-pointer text-xs hover:bg-blue-50">
+                <input type="checkbox" name="Días[]" value="Sábado" class="rounded text-blue-600"> Sáb
+              </label>
+              <label class="flex items-center gap-1.5 p-2 bg-slate-50 rounded-lg border border-slate-100 cursor-pointer text-xs hover:bg-blue-50 col-span-3 justify-center">
+                <input type="checkbox" name="Días[]" value="Domingo" class="rounded text-blue-600"> Domingo
+              </label>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">Categoría *</label>
+              <select name="Categoría" id="reg-categoria" onchange="actualizarLugaresFormulario()" class="w-full border border-slate-200 bg-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none">
+                <option value="etapas">Etapas / Paraderos</option>
+                <option value="comerciales">C. Comerciales</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">Lugar *</label>
+              <select name="Lugar" id="reg-lugar" class="w-full border border-slate-200 bg-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none"></select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">Horario de Interés *</label>
+            <select name="Horario" id="reg-horario" class="w-full border border-slate-200 bg-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none">
+              <!-- JS dinámico -->
+            </select>
+          </div>
+
+          <div class="bg-slate-50 p-3 rounded-lg border border-slate-100 space-y-3">
+            <div class="flex items-center gap-4">
+              <label class="flex items-center gap-1.5 text-sm cursor-pointer font-medium text-slate-700">
+                <input type="radio" name="Modalidad" value="solo" checked onchange="toggleParejaInput(false)" class="text-blue-600"> Ir Solo/a
+              </label>
+              <label class="flex items-center gap-1.5 text-sm cursor-pointer font-medium text-slate-700">
+                <input type="radio" name="Modalidad" value="pareja" onchange="toggleParejaInput(true)" class="text-blue-600"> Ir con Pareja
+              </label>
+            </div>
+            <div id="campo-pareja" class="hidden">
+              <label class="block text-[10px] font-bold text-blue-600 uppercase mb-1">Nombre Completo de la Pareja</label>
+              <input type="text" name="Nombre Pareja" id="reg-pareja-nombre" class="w-full border border-slate-200 rounded-lg px-3 py-1.5 text-sm bg-white focus:ring-2 focus:ring-blue-600 focus:outline-none">
+            </div>
+          </div>
+
+          <button type="submit" class="w-full bg-blue-700 hover:bg-blue-800 text-white font-semibold py-2.5 rounded-lg text-sm transition-all shadow-sm flex items-center justify-center gap-2">
+            <i data-lucide="send" class="w-4 h-4"></i> Enviar Solicitud por Correo
+          </button>
+        </form>
+      </div>
+
+      <!-- NUEVO PANEL DE CONFIGURACIÓN DE ADMINISTRADOR (OCULTO POR DEFECTO) -->
+      <div id="panel-config-admin" class="hidden bg-slate-900 text-white p-6 rounded-xl shadow-lg border border-slate-800 space-y-4">
+        <div class="flex items-center gap-2 border-b border-slate-800 pb-3">
+          <i data-lucide="sliders" class="text-emerald-400 w-5 h-5"></i>
+          <h3 class="text-base font-bold">Configuración del Sistema</h3>
+        </div>
+
+        <!-- Agregar Lugar -->
+        <div class="space-y-2">
+          <h4 class="text-xs font-bold text-slate-400 uppercase">Añadir Nuevo Lugar</h4>
+          <div class="flex gap-2">
+            <select id="add-lugar-cat" class="bg-slate-800 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none">
+              <option value="etapas">Etapa</option>
+              <option value="comerciales">Comercial</option>
+            </select>
+            <input id="add-lugar-nombre" type="text" placeholder="Ej. Diamante" class="flex-grow bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none">
+            <button onclick="agregarLugar()" class="bg-emerald-600 hover:bg-emerald-700 px-3 py-1.5 rounded-lg text-xs font-bold transition-all">+</button>
+          </div>
+        </div>
+
+        <!-- Agregar Horario -->
+        <div class="space-y-2">
+          <h4 class="text-xs font-bold text-slate-400 uppercase">Añadir Nuevo Horario</h4>
+          <div class="flex gap-2">
+            <input id="add-horario" type="text" placeholder="Ej. 12:00 - 14:00" class="flex-grow bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none">
+            <button onclick="agregarHorario()" class="bg-emerald-600 hover:bg-emerald-700 px-3 py-1.5 rounded-lg text-xs font-bold transition-all">+</button>
+          </div>
+        </div>
+
+        <!-- Cambiar Credenciales -->
+        <div class="space-y-2 border-t border-slate-800 pt-3">
+          <h4 class="text-xs font-bold text-slate-400 uppercase">Editar Credenciales de Acceso</h4>
+          <div class="grid grid-cols-2 gap-2">
+            <input id="edit-admin-user" type="text" placeholder="Nuevo Usuario" class="bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none">
+            <input id="edit-admin-pass" type="password" placeholder="Nueva Contraseña" class="bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none">
+          </div>
+          <button onclick="guardarCredenciales()" class="w-full bg-slate-800 hover:bg-slate-700 border border-slate-700 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all text-emerald-400">
+            Guardar Cambios de Acceso
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- COLUMNA DERECHA: VISUALIZACIÓN DEL HORARIO (7 columnas) -->
+    <section class="lg:col-span-7 bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col">
+      
+      <!-- Indicador Visual de Modo Admin -->
+      <div id="alerta-modo-admin" class="hidden bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4 text-xs text-amber-800 flex justify-between items-center no-print">
+        <div class="flex items-center gap-2">
+          <i data-lucide="unlock" class="w-4 h-4 text-amber-600"></i>
+          <span><strong>Modo Administrador Activo:</strong> Haz clic en las celdas para asignar publicadores o usa la columna de configuración izquierda.</span>
+        </div>
+        <button onclick="desactivarAdmin()" class="text-amber-900 underline font-semibold">Cerrar Sesión</button>
+      </div>
+
+      <!-- Selector de Tipo Superior -->
+      <div class="flex border-b border-slate-200 mb-6 no-print">
+        <button id="tab-etapas" onclick="cambiarFiltroSeccion('etapas')" class="flex-1 text-center py-3 font-bold text-sm tracking-wide border-b-2 border-blue-600 text-blue-700 transition-colors">
+          📍 ETAPAS / PARADEROS
+        </button>
+        <button id="tab-comerciales" onclick="cambiarFiltroSeccion('comerciales')" class="flex-1 text-center py-3 font-bold text-sm tracking-wide border-b-2 border-transparent text-slate-400 hover:text-slate-600 transition-colors">
+          🏢 CENTROS COMERCIALES
+        </button>
+      </div>
+
+      <!-- Selector de Puntos Específicos -->
+      <div class="mb-6 no-print">
+        <div id="pildoras-puntos" class="flex flex-wrap gap-2"></div>
+      </div>
+
+      <!-- Área de Tabla -->
+      <div class="flex-grow">
+        <div class="border-b border-slate-100 pb-3 mb-4 flex justify-between items-center">
+          <div>
+            <span id="label-tipo" class="text-xs font-bold text-blue-600 uppercase tracking-wider">Etapa activa</span>
+            <h3 id="titulo-punto-activo" class="text-2xl font-black text-slate-950 mt-0.5">---</h3>
+          </div>
+          <!-- Selector Semana -->
+          <div class="no-print text-right">
+            <span class="block text-[10px] text-slate-400 uppercase font-semibold">Semana del:</span>
+            <input type="date" id="fecha-semana" onchange="guardarFecha()" class="border border-slate-200 rounded-lg px-2 py-1 text-xs focus:ring-2 focus:ring-blue-600 focus:outline-none">
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full border-collapse text-left text-xs text-slate-600">
+            <thead class="bg-blue-50/70 border-b border-blue-200">
+              <tr>
+                <th class="px-3 py-2 border border-slate-200 font-bold text-blue-900 w-24">Turno</th>
+                <th class="px-3 py-2 border border-slate-200 font-bold text-blue-900">Lunes</th>
+                <th class="px-3 py-2 border border-slate-200 font-bold text-blue-900">Martes</th>
+                <th class="px-3 py-2 border border-slate-200 font-bold text-blue-900">Miércoles</th>
+                <th class="px-3 py-2 border border-slate-200 font-bold text-blue-900">Jueves</th>
+                <th class="px-3 py-2 border border-slate-200 font-bold text-blue-900">Viernes</th>
+                <th class="px-3 py-2 border border-slate-200 font-bold text-blue-900">Sábado</th>
+                <th class="px-3 py-2 border border-slate-200 font-bold text-blue-900">Domingo</th>
+              </tr>
+            </thead>
+            <tbody id="cuerpo-horario-punto">
+              <!-- JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Configuración extra (Solo visible en admin) -->
+      <div id="footer-admin-opciones" class="hidden mt-6 pt-4 border-t border-slate-100 flex justify-between items-center no-print text-xs">
+        <span class="text-slate-400">Restablecer datos</span>
+        <button onclick="limpiarRegistros()" class="text-red-500 hover:text-red-700 font-semibold flex items-center gap-1">
+          <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Limpiar todo el horario
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <!-- MODAL INICIO DE SESIÓN -->
+  <div id="modal-login" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-xl shadow-xl max-w-sm w-full p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h4 class="text-base font-bold text-slate-800 flex items-center gap-2">
+          <i data-lucide="lock" class="w-5 h-5 text-blue-600"></i> Acceso Administrativo
+        </h4>
+        <button onclick="cerrarModalLogin()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">Usuario</label>
+          <input id="login-user" type="text" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">Contraseña</label>
+          <input id="login-pass" type="password" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none">
+        </div>
+        <p id="login-error" class="text-xs text-red-500 hidden font-medium">Credenciales incorrectas. Intenta de nuevo.</p>
+      </div>
+      <div class="flex justify-end gap-2 border-t pt-4 mt-6">
+        <button onclick="cerrarModalLogin()" class="px-3 py-1.5 text-xs font-semibold text-slate-500 hover:bg-slate-50 rounded-lg transition-colors">Cancelar</button>
+        <button onclick="intentarLogin()" class="px-4 py-1.5 text-xs font-semibold text-white bg-blue-700 hover:bg-blue-800 rounded-lg transition-colors">Entrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL PARA ASIGNAR (SOLO PARA ADMIN) -->
+  <div id="modal-asignar-admin" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-xl shadow-xl max-w-sm w-full p-6">
+      <div class="flex justify-between items-center mb-3">
+        <h4 class="text-base font-bold text-blue-900">Asignar Publicadores</h4>
+        <button onclick="cerrarAsignarAdmin()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div class="space-y-4">
+        <p id="modal-detalle-admin" class="text-xs text-blue-800 bg-blue-50 p-2.5 rounded-lg font-medium border border-blue-100"></p>
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">Publicador 1 *</label>
+          <input id="admin-pub-1" type="text" class="w-full border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">Publicador 2 (Opcional)</label>
+          <input id="admin-pub-2" type="text" class="w-full border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none">
+        </div>
+      </div>
+      <div class="flex justify-end gap-2 border-t pt-4 mt-6">
+        <button onclick="liberarTurno()" class="px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50 rounded-lg transition-colors">Eliminar Asignación</button>
+        <button onclick="guardarAsignacionAdmin()" class="px-3 py-1.5 text-xs font-semibold text-white bg-blue-700 hover:bg-blue-800 rounded-lg transition-colors">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="bg-slate-100 text-center py-4 text-xs text-slate-400 border-t border-slate-200 mt-auto no-print">
+    <p>© Control de predicación local. Los datos se almacenan en tu navegador local de forma privada.</p>
+  </footer>
+
+  <script>
+    // --- ESTADO INICIAL Y PERSISTENCIA EN LOCALSTORAGE ---
+    const categoriasPorDefecto = {
+      etapas: ["Onix", "Brillante", "Diamante", "Esmeralda", "Tiara", "Platino", "Turquesa", "Perla", "Gema", "Oro", "Aquamarina"],
+      comerciales: ["Gran Aki", "Veris", "Tuti", "Plaza Orlando", "Plaza San Miguel"]
+    };
+
+    const horariosPorDefecto = ["06:30 - 08:30", "09:00 - 11:00", "16:00 - 18:00", "18:00 - 20:00", "20:00 - 21:30"];
+    const credencialesPorDefecto = { usuario: "admin", contrasena: "1234" };
+
+    // Carga de bases de datos persistentes
+    let categorias = JSON.parse(localStorage.getItem("hp_categorias")) || categoriasPorDefecto;
+    let horarios = JSON.parse(localStorage.getItem("hp_horarios")) || horariosPorDefecto;
+    let credenciales = JSON.parse(localStorage.getItem("hp_credenciales")) || credencialesPorDefecto;
+    let baseDatos = JSON.parse(localStorage.getItem("hp_metropolitano")) || {}; 
+
+    const diasSemana = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"];
+
+    // Variables de navegación interna
+    let categoriaActiva = "etapas";
+    let puntoActivo = categorias[categoriaActiva][0] || "---";
+    let esAdministrador = false; 
+    let celdaActivaLlave = null;
+
+    window.addEventListener("DOMContentLoaded", () => {
+      // Configurar fecha
+      const inputFecha = document.getElementById('fecha-semana');
+      const fechaGuardada = localStorage.getItem('hp_fecha_met');
+      if (fechaGuardada) {
+        inputFecha.value = fechaGuardada;
+      } else {
+        const hoy = new Date();
+        const lunes = new Date(hoy.setDate(hoy.getDate() - hoy.getDay() + (hoy.getDay() === 0 ? -6 : 1)));
+        inputFecha.value = lunes.toISOString().split('T')[0];
+      }
+
+      // Inicializar selectores y tablas
+      actualizarLugaresFormulario();
+      actualizarHorariosFormulario();
+      renderizarFiltrosYTabla();
+      lucide.createIcons();
+    });
+
+    function guardarFecha() {
+      localStorage.setItem('hp_fecha_met', document.getElementById('fecha-semana').value);
+    }
+
+    // --- FORMULARIO PUBLICADORES ---
+    function actualizarLugaresFormulario() {
+      const cat = document.getElementById("reg-categoria").value;
+      const selectLugar = document.getElementById("reg-lugar");
+      selectLugar.innerHTML = (categorias[cat] || []).map(l => `<option value="${l}">${l}</option>`).join('');
+    }
+
+    function actualizarHorariosFormulario() {
+      const selectHorario = document.getElementById("reg-horario");
+      selectHorario.innerHTML = horarios.map(h => `<option value="${h}">${h}</option>`).join('');
+    }
+
+    function toggleParejaInput(mostrar) {
+      const container = document.getElementById("campo-pareja");
+      const input = document.getElementById("reg-pareja-nombre");
+      if(mostrar) {
+        container.classList.remove("hidden");
+        input.required = true;
+      } else {
+        container.classList.add("hidden");
+        input.required = false;
+        input.value = "";
+      }
+    }
+
+    // --- SISTEMA DE LOGEO (MODAL) ---
+    function mostrarModalLogin() {
+      if (esAdministrador) {
+        desactivarAdmin();
+      } else {
+        document.getElementById("login-user").value = "";
+        document.getElementById("login-pass").value = "";
+        document.getElementById("login-error").classList.add("hidden");
+        document.getElementById("modal-login").classList.remove("hidden");
+      }
+    }
+
+    function cerrarModalLogin() {
+      document.getElementById("modal-login").classList.add("hidden");
+    }
+
+    function intentarLogin() {
+      const user = document.getElementById("login-user").value.trim();
+      const pass = document.getElementById("login-pass").value.trim();
+
+      if (user === credenciales.usuario && pass === credenciales.contrasena) {
+        esAdministrador = true;
+        cerrarModalLogin();
+
+        // Cargar campos de credenciales en el panel
+        document.getElementById("edit-admin-user").value = credenciales.usuario;
+        document.getElementById("edit-admin-pass").value = credenciales.contrasena;
+
+        // Mostrar elementos de administrador
+        document.getElementById("alerta-modo-admin").classList.remove("hidden");
+        document.getElementById("footer-admin-opciones").classList.remove("hidden");
+        document.getElementById("panel-config-admin").classList.remove("hidden");
+
+        const btn = document.getElementById("btn-modo-admin");
+        btn.className = "bg-green-700 hover:bg-green-800 border border-green-600 px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-all text-sm shadow-sm";
+        document.getElementById("texto-modo-admin").textContent = "Modo Admin Activo";
+
+        renderizarFiltrosYTabla();
+      } else {
+        document.getElementById("login-error").classList.remove("hidden");
+      }
+    }
+
+    function desactivarAdmin() {
+      esAdministrador = false;
+      document.getElementById("alerta-modo-admin").classList.add("hidden");
+      document.getElementById("footer-admin-opciones").classList.add("hidden");
+      document.getElementById("panel-config-admin").classList.add("hidden");
+
+      const btn = document.getElementById("btn-modo-admin");
+      btn.className = "bg-blue-800 hover:bg-blue-900 border border-blue-600 px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-all text-sm shadow-sm";
+      document.getElementById("texto-modo-admin").textContent = "Modo Administrador";
+      
+      renderizarFiltrosYTabla();
+    }
+
+    // --- ACCIONES DEL PANEL ADMINISTRADOR ---
+    function agregarLugar() {
+      const cat = document.getElementById("add-lugar-cat").value;
+      const nombre = document.getElementById("add-lugar-nombre").value.trim();
+
+      if (!nombre) return alert("Por favor escribe un nombre para el lugar.");
+      
+      if (!categorias[cat]) categorias[cat] = [];
+      if (categorias[cat].includes(nombre)) return alert("Este lugar ya existe.");
+
+      categorias[cat].push(nombre);
+      localStorage.setItem("hp_categorias", JSON.stringify(categorias));
+      
+      document.getElementById("add-lugar-nombre").value = "";
+      
+      actualizarLugaresFormulario();
+      renderizarFiltrosYTabla();
+      alert(`¡Lugar "${nombre}" agregado con éxito!`);
+    }
+
+    function agregarHorario() {
+      const horario = document.getElementById("add-horario").value.trim();
+
+      if (!horario) return alert("Por favor ingresa un horario.");
+      if (horarios.includes(horario)) return alert("Este horario ya existe.");
+
+      horarios.push(horario);
+      // Opcional: ordenar horarios cronológicamente si se desea
+      localStorage.setItem("hp_horarios", JSON.stringify(horarios));
+      
+      document.getElementById("add-horario").value = "";
+      
+      actualizarHorariosFormulario();
+      renderizarFiltrosYTabla();
+      alert(`¡Horario "${horario}" agregado con éxito!`);
+    }
+
+    function guardarCredenciales() {
+      const nuevoUser = document.getElementById("edit-admin-user").value.trim();
+      const nuevoPass = document.getElementById("edit-admin-pass").value.trim();
+
+      if (!nuevoUser || !nuevoPass) return alert("El usuario y la contraseña no pueden estar vacíos.");
+
+      credenciales = { usuario: nuevoUser, contrasena: nuevoPass };
+      localStorage.setItem("hp_credenciales", JSON.stringify(credenciales));
+      alert("¡Credenciales actualizadas correctamente!");
+    }
+
+    // --- RENDERIZACIÓN Y FILTROS ---
+    function cambiarFiltroSeccion(categoria) {
+      categoriaActiva = categoria;
+      puntoActivo = categorias[categoria][0] || "---";
+
+      const tabEtapas = document.getElementById("tab-etapas");
+      const tabComerciales = document.getElementById("tab-comerciales");
+
+      if (categoria === 'etapas') {
+        tabEtapas.className = "flex-1 text-center py-3 font-bold text-sm tracking-wide border-b-2 border-blue-600 text-blue-700 transition-colors";
+        tabComerciales.className = "flex-1 text-center py-3 font-bold text-sm tracking-wide border-b-2 border-transparent text-slate-400 hover:text-slate-600 transition-colors";
+      } else {
+        tabComerciales.className = "flex-1 text-center py-3 font-bold text-sm tracking-wide border-b-2 border-blue-600 text-blue-700 transition-colors";
+        tabEtapas.className = "flex-1 text-center py-3 font-bold text-sm tracking-wide border-b-2 border-transparent text-slate-400 hover:text-slate-600 transition-colors";
+      }
+
+      renderizarFiltrosYTabla();
+    }
+
+    function seleccionarPuntoEspecifico(punto) {
+      puntoActivo = punto;
+      renderizarFiltrosYTabla();
+    }
+
+    function renderizarFiltrosYTabla() {
+      const contenedorPildoras = document.getElementById("pildoras-puntos");
+      const puntos = categorias[categoriaActiva] || [];
+
+      contenedorPildoras.innerHTML = puntos.map(p => {
+        const activo = p === puntoActivo;
+        return `
+          <div class="inline-flex items-center gap-1 bg-slate-100 rounded-full pl-3 pr-2 py-1 text-xs font-semibold ${activo ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-200'}">
+            <button onclick="seleccionarPuntoEspecifico('${p}')" class="focus:outline-none">
+              ${p}
+            </button>
+            ${esAdministrador ? `
+              <button onclick="eliminarLugar('${categoriaActiva}', '${p}')" class="text-red-400 hover:text-red-200 ml-1">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              </button>
+            ` : ''}
+          </div>
+        `;
+      }).join('');
+
+      document.getElementById("label-tipo").textContent = categoriaActiva === "etapas" ? "Etapa / Paradero Activo" : "Centro Comercial Activo";
+      document.getElementById("titulo-punto-activo").textContent = puntoActivo;
+
+      const cuerpo = document.getElementById("cuerpo-horario-punto");
+      let html = "";
+
+      horarios.forEach(horario => {
+        html += `<tr class="border-b border-slate-100 hover:bg-slate-50/50">`;
+        html += `
+          <td class="px-2 py-3 font-bold text-slate-700 border border-slate-100 bg-slate-50/50 text-[11px] flex items-center justify-between group">
+            <span>${horario}</span>
+            ${esAdministrador ? `
+              <button onclick="eliminarHorario('${horario}')" class="text-red-400 hover:text-red-600 ml-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              </button>
+            ` : ''}
+          </td>
+        `;
+
+        diasSemana.forEach(dia => {
+          const llave = `${puntoActivo}_${dia}_${horario}`.replace(/\s+/g, '_');
+          const registro = baseDatos[llave];
+
+          let bloqueCelda = "";
+          if (registro) {
+            bloqueCelda = `
+              <div class="space-y-1">
+                <div class="font-bold text-slate-800 text-[11px] truncate leading-tight flex items-center gap-0.5" title="${registro.p1}">
+                  <i data-lucide="user" class="w-2.5 h-2.5 text-blue-500 shrink-0"></i>
+                  ${registro.p1.split(' ')[0]}
+                </div>
+                ${registro.p2 ? `
+                  <div class="font-bold text-slate-800 text-[11px] truncate leading-tight flex items-center gap-0.5" title="${registro.p2}">
+                    <i data-lucide="user" class="w-2.5 h-2.5 text-blue-500 shrink-0"></i>
+                    ${registro.p2.split(' ')[0]}
+                  </div>
+                ` : `
+                  <div class="text-[10px] text-amber-600 font-medium italic">¡Pareja libre!</div>
+                `}
+              </div>
+            `;
+          } else {
+            bloqueCelda = `<div class="text-slate-300 italic text-[10px]">Vacío</div>`;
+          }
+
+          html += `
+            <td ${esAdministrador ? `onclick="abrirAsignarAdmin('${llave}')"` : ''} class="px-2 py-3 border border-slate-100 min-w-[95px] max-w-[120px] align-top ${esAdministrador ? 'cursor-pointer hover:bg-blue-50/40' : 'cursor-default'}">
+              ${bloqueCelda}
+            </td>
+          `;
+        });
+
+        html += `</tr>`;
+      });
+
+      cuerpo.innerHTML = html;
+      lucide.createIcons();
+    }
+
+    // --- ACCIÓN: ELIMINAR ELEMENTOS ---
+    function eliminarLugar(categoria, lugar) {
+      if (!confirm(`¿Estás seguro de eliminar el lugar "${lugar}" de la lista? Se perderán las asignaciones vinculadas a este lugar.`)) return;
+      
+      categorias[categoria] = categorias[categoria].filter(l => l !== lugar);
+      localStorage.setItem("hp_categorias", JSON.stringify(categorias));
+      
+      if (puntoActivo === lugar) {
+        puntoActivo = categorias[categoriaActiva][0] || "---";
+      }
+
+      actualizarLugaresFormulario();
+      renderizarFiltrosYTabla();
+    }
+
+    function eliminarHorario(horario) {
+      if (!confirm(`¿Estás seguro de eliminar el horario de turno "${horario}"?`)) return;
+
+      horarios = horarios.filter(h => h !== horario);
+      localStorage.setItem("hp_horarios", JSON.stringify(horarios));
+
+      actualizarHorariosFormulario();
+      renderizarFiltrosYTabla();
+    }
+
+    // --- ASIGNACIONES DE LA TABLA (MODAL ADMIN) ---
+    function abrirAsignarAdmin(llave) {
+      celdaActivaLlave = llave;
+      const registro = baseDatos[llave] || { p1: '', p2: '' };
+
+      const partes = llave.split('_');
+      const lugar = partes[0];
+      const dia = partes[1];
+      const hora = partes.slice(2).join(' ').replace(/_/g, ' ');
+
+      document.getElementById("modal-detalle-admin").innerHTML = `
+        <strong>Lugar:</strong> ${lugar} &bull; ${dia}<br>
+        <strong>Turno:</strong> ${hora}
+      `;
+
+      document.getElementById("admin-pub-1").value = registro.p1 || '';
+      document.getElementById("admin-pub-2").value = registro.p2 || '';
+
+      document.getElementById("modal-asignar-admin").classList.remove("hidden");
+    }
+
+    function cerrarAsignarAdmin() {
+      document.getElementById("modal-asignar-admin").classList.add("hidden");
+      celdaActivaLlave = null;
+    }
+
+    function guardarAsignacionAdmin() {
+      if (!celdaActivaLlave) return;
+
+      const p1 = document.getElementById("admin-pub-1").value.trim();
+      const p2 = document.getElementById("admin-pub-2").value.trim();
+
+      if (p1) {
+        baseDatos[celdaActivaLlave] = { p1, p2 };
+      } else {
+        delete baseDatos[celdaActivaLlave];
+      }
+
+      localStorage.setItem("hp_metropolitano", JSON.stringify(baseDatos));
+      renderizarFiltrosYTabla();
+      cerrarAsignarAdmin();
+    }
+
+    function liberarTurno() {
+      if (celdaActivaLlave && baseDatos[celdaActivaLlave]) {
+        delete baseDatos[celdaActivaLlave];
+        localStorage.setItem("hp_metropolitano", JSON.stringify(baseDatos));
+        renderizarFiltrosYTabla();
+        cerrarAsignarAdmin();
+      }
+    }
+
+    function limpiarRegistros() {
+      if (confirm("¿Deseas vaciar por completo todas las asignaciones publicadas?")) {
+        baseDatos = {};
+        localStorage.removeItem("hp_metropolitano");
+        renderizarFiltrosYTabla();
+      }
+    }
+  </script>
+</body>
+</html>
