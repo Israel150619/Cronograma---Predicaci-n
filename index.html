@@ -4,652 +4,452 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sistema de Predicación Pública - Joya Oeste</title>
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- FontAwesome para Iconos -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
   <style>
-    @media print {
-      .no-print { display: none !important; }
-      body { background: white; color: black; }
+    /* Estilos personalizados para las tarjetas táctiles con visto */
+    .tarjeta-tactil-azul {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background-color: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      padding: 12px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s ease;
+    }
+
+    .tarjeta-tactil-azul:hover {
+      background-color: #f8fafc;
+      border-color: #cbd5e1;
+    }
+
+    .tarjeta-tactil-azul input {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .casilla-visto {
+      width: 20px;
+      height: 20px;
+      border: 2px solid #cbd5e1;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: transparent;
+      font-size: 12px;
+      font-weight: bold;
+      background-color: #ffffff;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .tarjeta-tactil-azul input:checked + .casilla-visto {
+      background-color: #1e40af; /* Azul Corporativo */
+      border-color: #1e40af;
+      color: #ffffff;
+    }
+
+    .tarjeta-tactil-azul:has(input:checked) {
+      background-color: #eff6ff;
+      border-color: #3b82f6;
     }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col font-sans">
+<body class="bg-slate-50 text-slate-800 min-h-screen">
 
-  <!-- ENCABEZADO -->
-  <header class="bg-blue-700 text-white shadow-md no-print">
-    <div class="max-w-7xl mx-auto px-4 py-5 flex flex-col sm:flex-row justify-between items-center gap-4">
-      <div class="flex items-center gap-3">
-        <i data-lucide="shield" class="w-8 h-8 text-blue-200"></i>
+  <!-- ========================================== -->
+  <!-- ENCABEZADO PRINCIPAL                       -->
+  <!-- ========================================== -->
+  <header class="bg-blue-800 text-white shadow-md mb-8">
+    <div class="max-w-6xl mx-auto px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-4">
+        <div class="bg-white text-blue-800 p-3 rounded-2xl shadow-inner text-2xl">
+          <i class="fa-solid fa-users-viewfinder"></i>
+        </div>
         <div>
-          <h1 class="text-2xl font-bold tracking-tight">Predicación Pública Metropolitana</h1>
-          <p class="text-sm text-blue-100">Congregación Joya Oeste — Horarios Oficiales</p>
+          <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight">Predicación Pública</h1>
+          <p class="text-blue-100 text-sm font-medium mt-0.5">Joya Oeste — Registro y Control de Predicación Pública</p>
         </div>
       </div>
-      <div class="flex gap-2">
-        <!-- Botón Administrador -->
-        <button id="btn-modo-admin" onclick="mostrarModalLogin()" class="bg-blue-800 hover:bg-blue-900 border border-blue-600 px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-all text-sm shadow-sm">
-          <i data-lucide="lock" class="w-4 h-4 text-blue-300"></i> <span id="texto-modo-admin">Modo Administrador</span>
-        </button>
-        <button onclick="window.print()" class="bg-blue-900 hover:bg-blue-950 px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-all text-sm shadow-sm">
-          <i data-lucide="printer" class="w-4 h-4 text-blue-300"></i> Imprimir PDF
-        </button>
-      </div>
+      <!-- Acceso Rápido Administrador -->
+      <button onclick="abrirModalAdmin()" class="bg-blue-700 hover:bg-blue-600 px-4 py-2 rounded-xl border border-blue-600/30 text-xs md:text-sm font-semibold flex items-center gap-2 transition-all">
+        <i class="fa-solid fa-lock"></i> Panel Administrador
+      </button>
     </div>
   </header>
 
-  <!-- CONTENIDO PRINCIPAL -->
-  <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+  <main class="max-w-6xl mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
     
-    <!-- COLUMNA IZQUIERDA: FORMULARIO DE SOLICITUD -->
-    <section class="lg:col-span-5 space-y-6 no-print">
-      <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-        <div class="flex items-center gap-2 mb-2 border-b border-slate-100 pb-3">
-          <i data-lucide="mail" class="text-blue-600 w-6 h-6"></i>
-          <div>
-            <h2 class="text-lg font-bold text-slate-800">Enviar Solicitud de Turno</h2>
-            <p class="text-xs text-slate-400">Selecciona el lugar y horario que estás visualizando en la tabla.</p>
-          </div>
-        </div>
+    <!-- ========================================== -->
+    <!-- COLUMNA IZQUIERDA: PROGRAMA DE PREDICACIÓN -->
+    <!-- ========================================== -->
+    <div class="lg:col-span-6 bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between">
+      <div>
+        <h2 class="text-xl font-bold text-slate-800 mb-2 flex items-center gap-2">
+          <i class="fa-solid fa-calendar-days text-blue-600"></i> Programa de predicación
+        </h2>
+        <p class="text-sm text-slate-500 mb-6">Selecciona la categoría y pulsa en un lugar para consultar la disponibilidad del cronograma.</p>
         
-        <!-- INTEGRACIÓN CON FORMSPREE -->
-        <form id="form-solicitud" action="https://formspree.io/f/maqreqwg" method="POST" class="space-y-4">
-          <div>
-            <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">Nombre Completo *</label>
-            <input type="text" name="Nombre" required class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none">
-          </div>
-
-          <div>
-            <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">Teléfono de Contacto *</label>
-            <input type="tel" name="Teléfono" required class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none" placeholder="Ej. 0999999999">
-          </div>
-
-          <div>
-            <label class="block text-xs font-semibold text-slate-500 uppercase mb-2">Días Disponibles *</label>
-            <div class="grid grid-cols-3 gap-2">
-              <label class="flex items-center gap-1.5 p-2 bg-slate-50 rounded-lg border border-slate-100 cursor-pointer text-xs hover:bg-blue-50">
-                <input type="checkbox" name="Días[]" value="Lunes" class="rounded text-blue-600"> Lunes
-              </label>
-              <label class="flex items-center gap-1.5 p-2 bg-slate-50 rounded-lg border border-slate-100 cursor-pointer text-xs hover:bg-blue-50">
-                <input type="checkbox" name="Días[]" value="Miércoles" class="rounded text-blue-600"> Miércoles
-              </label>
-              <label class="flex items-center gap-1.5 p-2 bg-slate-50 rounded-lg border border-slate-100 cursor-pointer text-xs hover:bg-blue-50">
-                <input type="checkbox" name="Días[]" value="Sábado" class="rounded text-blue-600"> Sábado
-              </label>
-            </div>
-          </div>
-
+        <!-- Filtrado por Categoría (Cajas con Visto) -->
+        <div class="space-y-2 mb-4">
+          <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider">1. Filtrar por Categoría</label>
           <div class="grid grid-cols-2 gap-3">
-            <div>
-              <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">Categoría *</label>
-              <select name="Categoría" id="reg-categoria" onchange="actualizarLugaresFormulario()" class="w-full border border-slate-200 bg-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none">
-                <option value="etapas">Etapas / Paraderos</option>
-                <option value="comerciales">C. Comerciales</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">Lugar *</label>
-              <select name="Lugar" id="reg-lugar" class="w-full border border-slate-200 bg-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none"></select>
-            </div>
-          </div>
-
-          <div>
-            <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">Horario de Interés *</label>
-            <select name="Horario" id="reg-horario" class="w-full border border-slate-200 bg-white rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none">
-              <!-- Cargado por JS -->
-            </select>
-          </div>
-
-          <div class="bg-slate-50 p-3 rounded-lg border border-slate-100 space-y-3">
-            <div class="flex items-center gap-4">
-              <label class="flex items-center gap-1.5 text-sm cursor-pointer font-medium text-slate-700">
-                <input type="radio" name="Modalidad" value="solo" checked onchange="toggleParejaInput(false)" class="text-blue-600"> Ir Solo/a
-              </label>
-              <label class="flex items-center gap-1.5 text-sm cursor-pointer font-medium text-slate-700">
-                <input type="radio" name="Modalidad" value="pareja" onchange="toggleParejaInput(true)" class="text-blue-600"> Ir con Pareja
-              </label>
-            </div>
-            <div id="campo-pareja" class="hidden">
-              <label class="block text-[10px] font-bold text-blue-600 uppercase mb-1">Nombre Completo de la Pareja</label>
-              <input type="text" name="Nombre Pareja" id="reg-pareja-nombre" class="w-full border border-slate-200 rounded-lg px-3 py-1.5 text-sm bg-white focus:ring-2 focus:ring-blue-600 focus:outline-none">
-            </div>
-          </div>
-
-          <button type="submit" class="w-full bg-blue-700 hover:bg-blue-800 text-white font-semibold py-2.5 rounded-lg text-sm transition-all shadow-sm flex items-center justify-center gap-2">
-            <i data-lucide="send" class="w-4 h-4"></i> Enviar Solicitud por Correo
-          </button>
-        </form>
-      </div>
-
-      <!-- PANEL DE CONFIGURACIÓN DE ADMINISTRADOR -->
-      <div id="panel-config-admin" class="hidden bg-slate-900 text-white p-6 rounded-xl shadow-lg border border-slate-800 space-y-4">
-        <div class="flex items-center gap-2 border-b border-slate-800 pb-3">
-          <i data-lucide="sliders" class="text-emerald-400 w-5 h-5"></i>
-          <h3 class="text-base font-bold">Configuración del Sistema</h3>
-        </div>
-
-        <!-- Agregar Lugar -->
-        <div class="space-y-2">
-          <h4 class="text-xs font-bold text-slate-400 uppercase">Añadir Nuevo Lugar</h4>
-          <div class="flex gap-2">
-            <select id="add-lugar-cat" class="bg-slate-800 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none">
-              <option value="etapas">Etapa</option>
-              <option value="comerciales">Comercial</option>
-            </select>
-            <input id="add-lugar-nombre" type="text" placeholder="Ej. Diamante" class="flex-grow bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none">
-            <button onclick="agregarLugar()" class="bg-emerald-600 hover:bg-emerald-700 px-3 py-1.5 rounded-lg text-xs font-bold transition-all">+</button>
+            <label class="tarjeta-tactil-azul">
+              <input type="radio" name="filtro_categoria" value="etapas" checked onchange="actualizarFiltroLugares('etapas')">
+              <div class="casilla-visto">✓</div>
+              <span class="text-sm font-semibold text-slate-700">📍 Etapas / Paraderos</span>
+            </label>
+            <label class="tarjeta-tactil-azul">
+              <input type="radio" name="filtro_categoria" value="comerciales" onchange="actualizarFiltroLugares('comerciales')">
+              <div class="casilla-visto">✓</div>
+              <span class="text-sm font-semibold text-slate-700">🏢 Centros Comerciales</span>
+            </label>
           </div>
         </div>
 
-        <!-- Agregar Horario -->
-        <div class="space-y-2">
-          <h4 class="text-xs font-bold text-slate-400 uppercase">Añadir Nuevo Horario</h4>
-          <div class="flex gap-2">
-            <input id="add-horario" type="text" placeholder="Ej. 12:00 - 14:00" class="flex-grow bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none">
-            <button onclick="agregarHorario()" class="bg-emerald-600 hover:bg-emerald-700 px-3 py-1.5 rounded-lg text-xs font-bold transition-all">+</button>
+        <!-- Filtrado por Lugar (Botones Táctiles Dinámicos) -->
+        <div class="space-y-2 mb-6">
+          <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider">2. Seleccionar Lugar</label>
+          <div id="contenedor-filtro-lugares" class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-48 overflow-y-auto p-1.5 bg-slate-50 rounded-xl border border-slate-100">
+            <!-- Cargado por JS con Etapas por defecto -->
           </div>
         </div>
 
-        <!-- Cambiar Credenciales -->
-        <div class="space-y-2 border-t border-slate-800 pt-3">
-          <h4 class="text-xs font-bold text-slate-400 uppercase">Editar Credenciales de Acceso</h4>
-          <div class="grid grid-cols-2 gap-2">
-            <input id="edit-admin-user" type="text" placeholder="Nuevo Usuario" class="bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none">
-            <input id="edit-admin-pass" type="password" placeholder="Nueva Contraseña" class="bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none">
-          </div>
-          <button onclick="guardarCredenciales()" class="w-full bg-slate-800 hover:bg-slate-700 border border-slate-700 py-1.5 rounded-lg text-xs font-semibold tracking-wide transition-all text-emerald-400">
-            Guardar Cambios de Acceso
-          </button>
-        </div>
-      </div>
-    </section>
-
-    <!-- COLUMNA DERECHA: VISUALIZACIÓN DEL HORARIO -->
-    <section class="lg:col-span-7 bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col">
-      
-      <!-- Indicador de Modo Admin -->
-      <div id="alerta-modo-admin" class="hidden bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4 text-xs text-amber-800 flex justify-between items-center no-print">
-        <div class="flex items-center gap-2">
-          <i data-lucide="unlock" class="w-4 h-4 text-amber-600"></i>
-          <span><strong>Modo Administrador Activo:</strong> Haz clic en las celdas para asignar publicadores.</span>
-        </div>
-        <button onclick="desactivarAdmin()" class="text-amber-900 underline font-semibold">Cerrar Sesión</button>
-      </div>
-
-      <!-- Selector de Tipo Superior -->
-      <div class="flex border-b border-slate-200 mb-6 no-print">
-        <button id="tab-etapas" onclick="cambiarFiltroSeccion('etapas')" class="flex-1 text-center py-3 font-bold text-sm tracking-wide border-b-2 border-blue-600 text-blue-700 transition-colors">
-          📍 ETAPAS / PARADEROS
-        </button>
-        <button id="tab-comerciales" onclick="cambiarFiltroSeccion('comerciales')" class="flex-1 text-center py-3 font-bold text-sm tracking-wide border-b-2 border-transparent text-slate-400 hover:text-slate-600 transition-colors">
-          🏢 CENTROS COMERCIALES
-        </button>
-      </div>
-
-      <!-- Selector de Puntos Específicos (Píldoras) -->
-      <div class="mb-6 no-print">
-        <div id="pildoras-puntos" class="flex flex-wrap gap-2"></div>
-      </div>
-
-      <!-- Área de Tabla -->
-      <div class="flex-grow">
-        <div class="border-b border-slate-100 pb-3 mb-4 flex justify-between items-center">
-          <div>
-            <span id="label-tipo" class="text-xs font-bold text-blue-600 uppercase tracking-wider">Etapa activa</span>
-            <h3 id="titulo-punto-activo" class="text-2xl font-black text-slate-950 mt-0.5">---</h3>
-          </div>
-          <!-- Selector Semana -->
-          <div class="no-print text-right">
-            <span class="block text-[10px] text-slate-400 uppercase font-semibold">Semana del:</span>
-            <input type="date" id="fecha-semana" onchange="guardarFecha()" class="border border-slate-200 rounded-lg px-2 py-1 text-xs focus:ring-2 focus:ring-blue-600 focus:outline-none">
-          </div>
-        </div>
-
-        <div class="overflow-x-auto">
-          <table class="w-full border-collapse text-left text-xs text-slate-600">
-            <thead class="bg-blue-50/70 border-b border-blue-200">
+        <!-- Tabla de Horarios -->
+        <div class="overflow-x-auto rounded-xl border border-slate-100">
+          <table class="w-full border-collapse text-left text-sm">
+            <thead class="bg-slate-50 text-slate-600 font-bold uppercase text-xs tracking-wider">
               <tr>
-                <th class="px-3 py-2 border border-slate-200 font-bold text-blue-900 w-24">Turno</th>
-                <th class="px-3 py-2 border border-slate-200 font-bold text-blue-900">Lunes</th>
-                <th class="px-3 py-2 border border-slate-200 font-bold text-blue-900">Miércoles</th>
-                <th class="px-3 py-2 border border-slate-200 font-bold text-blue-900">Sábado</th>
+                <th class="p-4">Horario</th>
+                <th class="p-4">Días Asignados</th>
+                <th class="p-4">Publicadores (Nombre y Apellido)</th>
               </tr>
             </thead>
-            <tbody id="cuerpo-horario-punto">
+            <tbody id="tabla-horarios-cuerpo" class="divide-y divide-slate-100 text-slate-700">
               <!-- Cargado dinámicamente -->
             </tbody>
           </table>
         </div>
       </div>
+    </div>
 
-      <!-- Vaciar tabla -->
-      <div id="footer-admin-opciones" class="hidden mt-6 pt-4 border-t border-slate-100 flex justify-between items-center no-print text-xs">
-        <span class="text-slate-400">Restablecer datos</span>
-        <button onclick="limpiarRegistros()" class="text-red-500 hover:text-red-700 font-semibold flex items-center gap-1">
-          <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Limpiar todo el horario en la nube
+    <!-- ========================================== -->
+    <!-- COLUMNA DERECHA: FORMULARIO DE SOLICITUD   -->
+    <!-- ========================================== -->
+    <div class="lg:col-span-6 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+      <h2 class="text-xl font-bold text-slate-800 mb-2 flex items-center gap-2">
+        <i class="fa-solid fa-pen-to-square text-blue-600"></i> Solicitud Predicación Pública
+      </h2>
+      <p class="text-sm text-slate-500 mb-6">Registra tu solicitud. Será publicada tras la aprobación del administrador.</p>
+
+      <form id="formulario-solicitud" action="https://formspree.io/f/maqreqwg" method="POST" onsubmit="enviarSolicitudForm(event)" class="space-y-5">
+        
+        <!-- Nombre y Apellido -->
+        <div class="space-y-1">
+          <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Nombre y Apellido Completo *</label>
+          <input type="text" name="nombre" required placeholder="Ej. Martha de Mera" 
+                 class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+        </div>
+
+        <!-- Teléfono -->
+        <div class="space-y-1">
+          <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Teléfono de Contacto *</label>
+          <input type="tel" name="telefono" required placeholder="Ej. 0989898989" 
+                 class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+        </div>
+
+        <!-- Asistencia con Pareja -->
+        <div class="space-y-2">
+          <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider">¿Asistirás con tu Pareja? *</label>
+          <div class="grid grid-cols-2 gap-3">
+            <label class="tarjeta-tactil-azul">
+              <input type="radio" name="asiste_con_pareja" value="No" checked onchange="toggleSeccionPareja(false)">
+              <div class="casilla-visto">✓</div>
+              <span class="text-sm font-semibold text-slate-700">Asistiré solo/a</span>
+            </label>
+            <label class="tarjeta-tactil-azul">
+              <input type="radio" name="asiste_con_pareja" value="Si" onchange="toggleSeccionPareja(true)">
+              <div class="casilla-visto">✓</div>
+              <span class="text-sm font-semibold text-slate-700">Con mi pareja</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Nombre de la Pareja -->
+        <div id="seccion-nombre-pareja" class="space-y-1 hidden">
+          <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Nombre y Apellido de la Pareja *</label>
+          <input type="text" id="input-pareja" name="nombre_pareja" placeholder="Ej. María López" 
+                 class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+        </div>
+
+        <!-- Días de la Semana -->
+        <div class="space-y-2">
+          <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Días Disponibles *</label>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            <label class="tarjeta-tactil-azul"><input type="checkbox" name="dias[]" value="Lunes"><div class="casilla-visto">✓</div><span class="text-xs font-semibold text-slate-700">Lunes</span></label>
+            <label class="tarjeta-tactil-azul"><input type="checkbox" name="dias[]" value="Martes"><div class="casilla-visto">✓</div><span class="text-xs font-semibold text-slate-700">Martes</span></label>
+            <label class="tarjeta-tactil-azul"><input type="checkbox" name="dias[]" value="Miércoles"><div class="casilla-visto">✓</div><span class="text-xs font-semibold text-slate-700">Miércoles</span></label>
+            <label class="tarjeta-tactil-azul"><input type="checkbox" name="dias[]" value="Jueves"><div class="casilla-visto">✓</div><span class="text-xs font-semibold text-slate-700">Jueves</span></label>
+            <label class="tarjeta-tactil-azul"><input type="checkbox" name="dias[]" value="Viernes"><div class="casilla-visto">✓</div><span class="text-xs font-semibold text-slate-700">Viernes</span></label>
+            <label class="tarjeta-tactil-azul"><input type="checkbox" name="dias[]" value="Sábado"><div class="casilla-visto">✓</div><span class="text-xs font-semibold text-slate-700">Sábado</span></label>
+            <label class="tarjeta-tactil-azul col-span-2 sm:col-span-1"><input type="checkbox" name="dias[]" value="Domingo"><div class="casilla-visto">✓</div><span class="text-xs font-semibold text-slate-700">Domingo</span></label>
+          </div>
+        </div>
+
+        <!-- Categoría del Formulario -->
+        <div class="space-y-2">
+          <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Categoría de Predicación *</label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <label class="tarjeta-tactil-azul">
+              <input type="radio" name="categoria_formulario" value="etapas" checked onchange="actualizarLugaresFormulario('etapas')">
+              <div class="casilla-visto">✓</div>
+              <span class="text-sm font-semibold text-slate-700">📍 Etapas / Paraderos</span>
+            </label>
+            <label class="tarjeta-tactil-azul">
+              <input type="radio" name="categoria_formulario" value="comerciales" onchange="actualizarLugaresFormulario('comerciales')">
+              <div class="casilla-visto">✓</div>
+              <span class="text-sm font-semibold text-slate-700">🏢 Centros Comerciales</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Lugar del Formulario -->
+        <div class="space-y-2">
+          <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Lugar del Turno *</label>
+          <div id="contenedor-lugares-formulario" class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-48 overflow-y-auto p-1.5 bg-slate-50 rounded-xl border border-slate-100">
+            <!-- Relleno por JS -->
+          </div>
+        </div>
+
+        <!-- Horarios Correctos del Formulario -->
+        <div class="space-y-2">
+          <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Horario de Interés *</label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <label class="tarjeta-tactil-azul"><input type="radio" name="horario_interes" value="6:30 - 8:30" required><div class="casilla-visto">✓</div><span class="text-xs font-bold text-slate-700">6:30 - 8:30</span></label>
+            <label class="tarjeta-tactil-azul"><input type="radio" name="horario_interes" value="9:00 - 11:00"><div class="casilla-visto">✓</div><span class="text-xs font-bold text-slate-700">9:00 - 11:00</span></label>
+            <label class="tarjeta-tactil-azul"><input type="radio" name="horario_interes" value="16:00 - 18:00"><div class="casilla-visto">✓</div><span class="text-xs font-bold text-slate-700">16:00 - 18:00</span></label>
+            <label class="tarjeta-tactil-azul"><input type="radio" name="horario_interes" value="18:00 - 20:00"><div class="casilla-visto">✓</div><span class="text-xs font-bold text-slate-700">18:00 - 20:00</span></label>
+            <label class="tarjeta-tactil-azul col-span-1 sm:col-span-2"><input type="radio" name="horario_interes" value="20:00 - 21:30"><div class="casilla-visto">✓</div><span class="text-xs font-bold text-slate-700 text-center w-full">20:00 - 21:30</span></label>
+          </div>
+        </div>
+
+        <!-- Botón de Envío -->
+        <button type="submit" class="w-full bg-blue-800 text-white font-bold py-3.5 px-4 rounded-xl hover:bg-blue-900 active:scale-[0.99] transition-all shadow-md mt-4">
+          Enviar Mi Solicitud
         </button>
-      </div>
-    </section>
+      </form>
+    </div>
   </main>
 
-  <!-- MODAL INICIO DE SESIÓN -->
-  <div id="modal-login" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
-    <div class="bg-white rounded-xl shadow-xl max-w-sm w-full p-6">
-      <div class="flex justify-between items-center mb-4">
-        <h4 class="text-base font-bold text-slate-800 flex items-center gap-2">
-          <i data-lucide="lock" class="w-5 h-5 text-blue-600"></i> Acceso Administrativo
-        </h4>
-        <button onclick="cerrarModalLogin()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
+  <!-- ========================================== -->
+  <!-- MODAL DE ADMINISTRACIÓN                    -->
+  <!-- ========================================== -->
+  <div id="modal-admin" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-xl border border-slate-100 max-h-[85vh] flex flex-col">
+      <div class="flex items-center justify-between border-b pb-4 mb-4">
+        <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+          <i class="fa-solid fa-user-shield text-blue-600"></i> Solicitudes Pendientes de Aprobación
+        </h3>
+        <button onclick="cerrarModalAdmin()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
       </div>
-      <div class="space-y-4">
-        <div>
-          <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">Usuario</label>
-          <input id="login-user" type="text" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none">
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">Contraseña</label>
-          <input id="login-pass" type="password" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none">
-        </div>
-        <p id="login-error" class="text-xs text-red-500 hidden font-medium">Credenciales incorrectas.</p>
-      </div>
-      <div class="flex justify-end gap-2 border-t pt-4 mt-6">
-        <button onclick="cerrarModalLogin()" class="px-3 py-1.5 text-xs font-semibold text-slate-500 hover:bg-slate-50 rounded-lg transition-colors">Cancelar</button>
-        <button onclick="intentarLogin()" class="px-4 py-1.5 text-xs font-semibold text-white bg-blue-700 hover:bg-blue-800 rounded-lg transition-colors">Entrar</button>
-      </div>
-    </div>
-  </div>
 
-  <!-- MODAL ASIGNACIÓN -->
-  <div id="modal-asignar-admin" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
-    <div class="bg-white rounded-xl shadow-xl max-w-sm w-full p-6">
-      <div class="flex justify-between items-center mb-3">
-        <h4 class="text-base font-bold text-blue-900">Asignar Publicadores</h4>
-        <button onclick="cerrarAsignarAdmin()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-5 h-5"></i></button>
-      </div>
-      <div class="space-y-4">
-        <p id="modal-detalle-admin" class="text-xs text-blue-800 bg-blue-50 p-2.5 rounded-lg font-medium border border-blue-100"></p>
-        <div>
-          <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">Publicador 1 *</label>
-          <input id="admin-pub-1" type="text" class="w-full border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none">
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-500 uppercase mb-1">Publicador 2 (Opcional)</label>
-          <input id="admin-pub-2" type="text" class="w-full border border-slate-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none">
-        </div>
-      </div>
-      <div class="flex justify-end gap-2 border-t pt-4 mt-6">
-        <button onclick="liberarTurno()" class="px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50 rounded-lg transition-colors">Eliminar Asignación</button>
-        <button onclick="guardarAsignacionAdmin()" class="px-3 py-1.5 text-xs font-semibold text-white bg-blue-700 hover:bg-blue-800 rounded-lg transition-colors">Confirmar</button>
+      <!-- Tabla interna del Administrador -->
+      <div class="overflow-y-auto flex-1 mb-4 border rounded-xl">
+        <table class="w-full text-left text-sm">
+          <thead class="bg-slate-50 text-slate-600 font-bold uppercase text-xs">
+            <tr>
+              <th class="p-3">Publicador(es)</th>
+              <th class="p-3">Día / Hora</th>
+              <th class="p-3">Lugar</th>
+              <th class="p-3 text-right">Acción</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-pendientes-admin" class="divide-y divide-slate-100">
+            <!-- Solicitudes cargadas dinámicamente -->
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
 
-  <footer class="bg-slate-100 text-center py-4 text-xs text-slate-400 border-t border-slate-200 mt-auto no-print">
-    <p>© Control de predicación local. Conectado en tiempo real con Firebase.</p>
-  </footer>
-
-  <!-- ================= LÓGICA & FIREBASE ================= -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, onValue, set, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-
-    // Configuración con API Key verificada de tu consola
-    const firebaseConfig = {
-      apiKey: "AIzaSyC6_hU7wAHx_EFoQKG5OFY5FCvWA2VioPo",
-      authDomain: "predicaci.firebaseapp.com",
-      databaseURL: "https://predicaci-default-rtdb.firebaseio.com",
-      projectId: "predicaci",
-      storageBucket: "predicaci.firebasestorage.app",
-      messagingSenderId: "847390840767",
-      appId: "1:847390840767:web:35a02ead5c28550461730a"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-
-    // Listas por defecto
-    const categoriasPorDefecto = {
+  <!-- ========================================== -->
+  <!-- LÓGICA DE JAVASCRIPT                       -->
+  <!-- ========================================== -->
+  <script>
+    const listadoDeLugares = {
       etapas: ["Onix", "Brillante", "Diamante", "Esmeralda", "Tiara", "Platino", "Turquesa", "Perla", "Gema", "Oro", "Aquamarina"],
       comerciales: ["Gran Aki", "Veris", "Tuti", "Plaza Orlando", "Plaza San Miguel"]
     };
-    const horariosPorDefecto = ["09:00 - 11:00", "11:00 - 13:00", "13:00 - 15:00", "15:00 - 17:00"];
-    const credencialesPorDefecto = { usuario: "admin", contrasena: "1234" };
 
-    // Estados Locales Sincronizados
-    let categorias = JSON.parse(localStorage.getItem("hp_categorias")) || categoriasPorDefecto;
-    let horarios = JSON.parse(localStorage.getItem("hp_horarios")) || horariosPorDefecto;
-    let credenciales = JSON.parse(localStorage.getItem("hp_credenciales")) || credencialesPorDefecto;
-    
-    // Almacén de turnos en tiempo real
-    let baseDatosFirebase = {};
+    // Base de datos de prueba (Simulando los turnos y los nuevos horarios reales)
+    let solicitudesBD = [
+      { id: 1, nombre: "Carlos Mendoza", pareja: "Diana Mendoza", dias: ["Lunes"], categoria: "etapas", lugar: "Onix", horario: "9:00 - 11:00", estado: "Aprobado" },
+      { id: 2, nombre: "Jorge Vaca", pareja: "", dias: ["Miércoles"], categoria: "etapas", lugar: "Onix", horario: "16:00 - 18:00", estado: "Pendiente" }
+    ];
 
-    const diasSemana = ["Lunes", "Miércoles", "Sábado"];
-    let categoriaActiva = "etapas";
-    let puntoActivo = categorias[categoriaActiva][0] || "---";
-    let esAdministrador = false;
-    let celdaActivaLlave = null;
-
-    // Ejecutar al iniciar
-    window.addEventListener("DOMContentLoaded", () => {
-      const inputFecha = document.getElementById('fecha-semana');
-      const fechaGuardada = localStorage.getItem('hp_fecha_met');
-      if (fechaGuardada) {
-        inputFecha.value = fechaGuardada;
-      } else {
-        const hoy = new Date();
-        const lunes = new Date(hoy.setDate(hoy.getDate() - hoy.getDay() + (hoy.getDay() === 0 ? -6 : 1)));
-        inputFecha.value = lunes.toISOString().split('T')[0];
-      }
-
-      actualizarLugaresFormulario();
-      actualizarHorariosFormulario();
-      
-      // Escuchar cambios de turnos en Firebase
-      onValue(ref(db, 'turnos_metropolitanos'), (snapshot) => {
-        baseDatosFirebase = snapshot.val() || {};
-        renderizarFiltrosYTabla();
-      });
-
-      lucide.createIcons();
-    });
-
-    window.guardarFecha = function() {
-      localStorage.setItem('hp_fecha_met', document.getElementById('fecha-semana').value);
-    }
-
-    // --- FORMULARIO SOLICITUDES ---
-    window.actualizarLugaresFormulario = function() {
-      const cat = document.getElementById("reg-categoria").value;
-      const selectLugar = document.getElementById("reg-lugar");
-      selectLugar.innerHTML = (categorias[cat] || []).map(l => `<option value="${l}">${l}</option>`).join('');
-    }
-
-    window.actualizarHorariosFormulario = function() {
-      const selectHorario = document.getElementById("reg-horario");
-      selectHorario.innerHTML = horarios.map(h => `<option value="${h}">${h}</option>`).join('');
-    }
-
-    window.toggleParejaInput = function(mostrar) {
-      const container = document.getElementById("campo-pareja");
-      const input = document.getElementById("reg-pareja-nombre");
-      if(mostrar) {
-        container.classList.remove("hidden");
+    function toggleSeccionPareja(mostrar) {
+      const seccion = document.getElementById("seccion-nombre-pareja");
+      const input = document.getElementById("input-pareja");
+      if (mostrar) {
+        seccion.classList.remove("hidden");
         input.required = true;
       } else {
-        container.classList.add("hidden");
+        seccion.classList.add("hidden");
         input.required = false;
         input.value = "";
       }
     }
 
-    // --- ACCESO ADMINISTRADOR ---
-    window.mostrarModalLogin = function() {
-      if (esAdministrador) {
-        desactivarAdmin();
-      } else {
-        document.getElementById("login-user").value = "";
-        document.getElementById("login-pass").value = "";
-        document.getElementById("login-error").classList.add("hidden");
-        document.getElementById("modal-login").classList.remove("hidden");
-      }
-    }
-
-    window.cerrarModalLogin = function() {
-      document.getElementById("modal-login").classList.add("hidden");
-    }
-
-    window.intentarLogin = function() {
-      const user = document.getElementById("login-user").value.trim();
-      const pass = document.getElementById("login-pass").value.trim();
-
-      if (user === credenciales.usuario && pass === credenciales.contrasena) {
-        esAdministrador = true;
-        cerrarModalLogin();
-
-        document.getElementById("edit-admin-user").value = credenciales.usuario;
-        document.getElementById("edit-admin-pass").value = credenciales.contrasena;
-
-        document.getElementById("alerta-modo-admin").classList.remove("hidden");
-        document.getElementById("footer-admin-opciones").classList.remove("hidden");
-        document.getElementById("panel-config-admin").classList.remove("hidden");
-
-        const btn = document.getElementById("btn-modo-admin");
-        btn.className = "bg-green-700 hover:bg-green-800 border border-green-600 px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-all text-sm shadow-sm";
-        document.getElementById("texto-modo-admin").textContent = "Modo Admin Activo";
-
-        renderizarFiltrosYTabla();
-      } else {
-        document.getElementById("login-error").classList.remove("hidden");
-      }
-    }
-
-    window.desactivarAdmin = function() {
-      esAdministrador = false;
-      document.getElementById("alerta-modo-admin").classList.add("hidden");
-      document.getElementById("footer-admin-opciones").classList.add("hidden");
-      document.getElementById("panel-config-admin").classList.add("hidden");
-
-      const btn = document.getElementById("btn-modo-admin");
-      btn.className = "bg-blue-800 hover:bg-blue-900 border border-blue-600 px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-all text-sm shadow-sm";
-      document.getElementById("texto-modo-admin").textContent = "Modo Administrador";
+    // Actualiza los botones táctiles de selección de lugar del Filtro Izquierdo (Programa de Predicación)
+    function actualizarFiltroLugares(categoria) {
+      const contenedor = document.getElementById("contenedor-filtro-lugares");
+      const lugares = listadoDeLugares[categoria] || [];
       
-      renderizarFiltrosYTabla();
-    }
-
-    // --- PANEL ADMINISTRADOR (CREAR / EDITAR RECURSOS) ---
-    window.agregarLugar = function() {
-      const cat = document.getElementById("add-lugar-cat").value;
-      const nombre = document.getElementById("add-lugar-nombre").value.trim();
-
-      if (!nombre) return alert("Por favor escribe un nombre.");
-      if (categorias[cat].includes(nombre)) return alert("Este lugar ya existe.");
-
-      categorias[cat].push(nombre);
-      localStorage.setItem("hp_categorias", JSON.stringify(categorias));
-      document.getElementById("add-lugar-nombre").value = "";
+      contenedor.innerHTML = lugares.map((lugar, index) => `
+        <label class="tarjeta-tactil-azul">
+          <input type="radio" name="filtro_lugar_item" value="${lugar}" ${index === 0 ? 'checked' : ''} onchange="cargarHorariosFiltrados()">
+          <div class="casilla-visto">✓</div>
+          <span class="text-xs font-semibold text-slate-700">${lugar}</span>
+        </label>
+      `).join('');
       
-      actualizarLugaresFormulario();
-      renderizarFiltrosYTabla();
+      cargarHorariosFiltrados();
     }
 
-    window.agregarHorario = function() {
-      const horario = document.getElementById("add-horario").value.trim();
-
-      if (!horario) return alert("Ingresa un horario.");
-      if (horarios.includes(horario)) return alert("Este horario ya existe.");
-
-      horarios.push(horario);
-      localStorage.setItem("hp_horarios", JSON.stringify(horarios));
-      document.getElementById("add-horario").value = "";
+    // Filtra y muestra la tabla de horarios de la etapa/comercial seleccionada
+    function cargarHorariosFiltrados() {
+      const checkedInput = document.querySelector('input[name="filtro_lugar_item"]:checked');
+      if (!checkedInput) return;
       
-      actualizarHorariosFormulario();
-      renderizarFiltrosYTabla();
-    }
-
-    window.guardarCredenciales = function() {
-      const nuevoUser = document.getElementById("edit-admin-user").value.trim();
-      const nuevoPass = document.getElementById("edit-admin-pass").value.trim();
-
-      if (!nuevoUser || !nuevoPass) return alert("Campos vacíos.");
-
-      credenciales = { usuario: nuevoUser, contrasena: nuevoPass };
-      localStorage.setItem("hp_credenciales", JSON.stringify(credenciales));
-      alert("¡Credenciales actualizadas!");
-    }
-
-    // --- RENDERIZACIÓN ---
-    window.cambiarFiltroSeccion = function(categoria) {
-      categoriaActiva = categoria;
-      puntoActivo = categorias[categoria][0] || "---";
-
-      const tabEtapas = document.getElementById("tab-etapas");
-      const tabComerciales = document.getElementById("tab-comerciales");
-
-      if (categoria === 'etapas') {
-        tabEtapas.className = "flex-1 text-center py-3 font-bold text-sm tracking-wide border-b-2 border-blue-600 text-blue-700 transition-colors";
-        tabComerciales.className = "flex-1 text-center py-3 font-bold text-sm tracking-wide border-b-2 border-transparent text-slate-400 hover:text-slate-600 transition-colors";
-      } else {
-        tabComerciales.className = "flex-1 text-center py-3 font-bold text-sm tracking-wide border-b-2 border-blue-600 text-blue-700 transition-colors";
-        tabEtapas.className = "flex-1 text-center py-3 font-bold text-sm tracking-wide border-b-2 border-transparent text-slate-400 hover:text-slate-600 transition-colors";
+      const lugarSeleccionado = checkedInput.value;
+      const tablaCuerpo = document.getElementById("tabla-horarios-cuerpo");
+      
+      const aprobados = solicitudesBD.filter(s => s.lugar === lugarSeleccionado && s.estado === "Aprobado");
+      
+      if(aprobados.length === 0) {
+        tablaCuerpo.innerHTML = `<tr><td colspan="3" class="p-8 text-center text-slate-400">No hay turnos asignados en este lugar.</td></tr>`;
+        return;
       }
 
-      renderizarFiltrosYTabla();
-    }
-
-    window.seleccionarPuntoEspecifico = function(punto) {
-      puntoActivo = punto;
-      renderizarFiltrosYTabla();
-    }
-
-    function renderizarFiltrosYTabla() {
-      const contenedorPildoras = document.getElementById("pildoras-puntos");
-      const puntos = categorias[categoriaActiva] || [];
-
-      contenedorPildoras.innerHTML = puntos.map(p => {
-        const activo = p === puntoActivo;
-        return `
-          <div class="inline-flex items-center gap-1 bg-slate-100 rounded-full pl-3 pr-2 py-1 text-xs font-semibold ${activo ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-200'}">
-            <button onclick="seleccionarPuntoEspecifico('${p}')" class="focus:outline-none">
-              ${p}
-            </button>
-            ${esAdministrador ? `
-              <button onclick="eliminarLugar('${categoriaActiva}', '${p}')" class="text-red-400 hover:text-red-200 ml-1">
-                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-              </button>
-            ` : ''}
-          </div>
-        `;
-      }).join('');
-
-      document.getElementById("label-tipo").textContent = categoriaActiva === "etapas" ? "Etapa / Paradero Activo" : "Centro Comercial Activo";
-      document.getElementById("titulo-punto-activo").textContent = puntoActivo;
-
-      const cuerpo = document.getElementById("cuerpo-horario-punto");
-      let html = "";
-
-      horarios.forEach(horario => {
-        const horaLimpia = horario.replace(/\s+/g, '');
-        html += `<tr class="border-b border-slate-100 hover:bg-slate-50/50">`;
-        html += `
-          <td class="px-2 py-3 font-bold text-slate-700 border border-slate-100 bg-slate-50/50 text-[11px] flex items-center justify-between group">
-            <span>${horario}</span>
-            ${esAdministrador ? `
-              <button onclick="eliminarHorario('${horario}')" class="text-red-400 hover:text-red-600 ml-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-              </button>
-            ` : ''}
+      tablaCuerpo.innerHTML = aprobados.map(a => `
+        <tr class="hover:bg-slate-50 transition-all">
+          <td class="p-4 font-bold text-blue-800">${a.horario}</td>
+          <td class="p-4 text-slate-600 font-semibold">${a.dias.join(', ')}</td>
+          <td class="p-4 text-slate-800 font-medium">
+            ${a.nombre} ${a.pareja ? `<span class="text-slate-400 font-normal">y</span> ${a.pareja}` : ''}
           </td>
-        `;
-
-        diasSemana.forEach(dia => {
-          const llave = `${puntoActivo}_${dia}_${horaLimpia}`.replace(/[.#$/\[\]]/g, "_");
-          const registro = baseDatosFirebase[llave];
-
-          let bloqueCelda = "";
-          if (registro && (registro.p1 || registro.p2)) {
-            bloqueCelda = `
-              <div class="space-y-1">
-                <div class="font-bold text-slate-800 text-[11px] truncate leading-tight flex items-center gap-0.5" title="${registro.p1}">
-                  <i data-lucide="user" class="w-2.5 h-2.5 text-blue-500 shrink-0"></i>
-                  ${registro.p1 || 'Vacío'}
-                </div>
-                <div class="font-bold text-slate-800 text-[11px] truncate leading-tight flex items-center gap-0.5" title="${registro.p2}">
-                  <i data-lucide="user" class="w-2.5 h-2.5 text-blue-500 shrink-0"></i>
-                  ${registro.p2 || 'Vacío'}
-                </div>
-              </div>
-            `;
-          } else {
-            bloqueCelda = `<div class="text-slate-300 italic text-[10px]">Libre</div>`;
-          }
-
-          html += `
-            <td ${esAdministrador ? `onclick="abrirAsignarAdmin('${llave}')"` : ''} class="px-2 py-3 border border-slate-100 min-w-[95px] max-w-[120px] align-top ${esAdministrador ? 'cursor-pointer hover:bg-blue-50/40' : 'cursor-default'}">
-              ${bloqueCelda}
-            </td>
-          `;
-        });
-
-        html += `</tr>`;
-      });
-
-      cuerpo.innerHTML = html;
-      lucide.createIcons();
+        </tr>
+      `).join('');
     }
 
-    // --- ACCIONES ELIMINAR ELEMENTOS ---
-    window.eliminarLugar = function(categoria, lugar) {
-      if (!confirm(`¿Eliminar el lugar "${lugar}"?`)) return;
-      categorias[categoria] = categorias[categoria].filter(l => l !== lugar);
-      localStorage.setItem("hp_categorias", JSON.stringify(categorias));
-      if (puntoActivo === lugar) {
-        puntoActivo = categorias[categoriaActiva][0] || "---";
-      }
-      actualizarLugaresFormulario();
-      renderizarFiltrosYTabla();
+    // Actualiza los botones táctiles de selección de lugar en el Formulario de la Derecha
+    function actualizarLugaresFormulario(categoria) {
+      const contenedor = document.getElementById("contenedor-lugares-formulario");
+      const lugares = listadoDeLugares[categoria] || [];
+      contenedor.innerHTML = lugares.map((lugar, index) => `
+        <label class="tarjeta-tactil-azul">
+          <input type="radio" name="lugar" value="${lugar}" ${index === 0 ? 'checked' : ''} required>
+          <div class="casilla-visto">✓</div>
+          <span class="text-xs font-semibold text-slate-700">${lugar}</span>
+        </label>
+      `).join('');
     }
 
-    window.eliminarHorario = function(horario) {
-      if (!confirm(`¿Eliminar el horario "${horario}"?`)) return;
-      horarios = horarios.filter(h => h !== horario);
-      localStorage.setItem("hp_horarios", JSON.stringify(horarios));
-      actualizarHorariosFormulario();
-      renderizarFiltrosYTabla();
+    // Guarda temporalmente y procesa como 'Pendiente'
+    function enviarSolicitudForm(event) {
+      event.preventDefault();
+      const form = event.target;
+      const data = new FormData(form);
+
+      const nuevaSolicitud = {
+        id: Date.now(),
+        nombre: data.get("nombre"),
+        pareja: data.get("nombre_pareja") || "",
+        dias: Array.from(form.querySelectorAll('input[name="dias[]"]:checked')).map(el => el.value),
+        categoria: data.get("categoria_formulario"),
+        lugar: data.get("lugar"),
+        horario: data.get("horario_interes"),
+        estado: "Pendiente"
+      };
+
+      solicitudesBD.push(nuevaSolicitud);
+      alert("¡Solicitud enviada! Tu turno aparecerá en el programa una vez que el administrador lo apruebe.");
+      form.reset();
+      toggleSeccionPareja(false);
+      actualizarLugaresFormulario("etapas");
     }
 
-    // --- ASIGNACIONES EN FIREBASE ---
-    window.abrirAsignarAdmin = function(llave) {
-      celdaActivaLlave = llave;
-      const registro = baseDatosFirebase[llave] || { p1: '', p2: '' };
-
-      const partes = llave.split('_');
-      const lugar = partes[0] || '---';
-      const dia = partes[1] || '---';
-      const hora = partes.slice(2).join(' ');
-
-      document.getElementById("modal-detalle-admin").innerHTML = `
-        <strong>Lugar:</strong> ${lugar} &bull; ${dia}<br>
-        <strong>Turno:</strong> ${hora}
-      `;
-
-      document.getElementById("admin-pub-1").value = registro.p1 || '';
-      document.getElementById("admin-pub-2").value = registro.p2 || '';
-
-      document.getElementById("modal-asignar-admin").classList.remove("hidden");
-    }
-
-    window.cerrarAsignarAdmin = function() {
-      document.getElementById("modal-asignar-admin").classList.add("hidden");
-      celdaActivaLlave = null;
-    }
-
-    window.guardarAsignacionAdmin = function() {
-      if (!celdaActivaLlave) return;
-
-      const p1 = document.getElementById("admin-pub-1").value.trim();
-      const p2 = document.getElementById("admin-pub-2").value.trim();
-
-      if (p1 || p2) {
-        set(ref(db, `turnos_metropolitanos/${celdaActivaLlave}`), { p1, p2 })
-          .then(() => cerrarAsignarAdmin());
-      } else {
-        remove(ref(db, `turnos_metropolitanos/${celdaActivaLlave}`))
-          .then(() => cerrarAsignarAdmin());
+    // Modal de Administración
+    function abrirModalAdmin() {
+      const password = prompt("Ingrese la clave del administrador para ver las solicitudes pendientes:");
+      if (password === "admin123") {
+        document.getElementById("modal-admin").classList.remove("hidden");
+        cargarPendientesAdmin();
+      } else if (password !== null) {
+        alert("Clave incorrecta. Acceso denegado.");
       }
     }
 
-    window.liberarTurno = function() {
-      if (celdaActivaLlave) {
-        remove(ref(db, `turnos_metropolitanos/${celdaActivaLlave}`))
-          .then(() => cerrarAsignarAdmin());
+    function cerrarModalAdmin() {
+      document.getElementById("modal-admin").classList.add("hidden");
+    }
+
+    function cargarPendientesAdmin() {
+      const tabla = document.getElementById("tabla-pendientes-admin");
+      const pendientes = solicitudesBD.filter(s => s.estado === "Pendiente");
+
+      if (pendientes.length === 0) {
+        tabla.innerHTML = `<tr><td colspan="4" class="p-6 text-center text-slate-400">No hay solicitudes pendientes por el momento.</td></tr>`;
+        return;
+      }
+
+      tabla.innerHTML = pendientes.map(p => `
+        <tr class="hover:bg-slate-50">
+          <td class="p-3 font-semibold text-slate-700 text-xs">
+            ${p.nombre} <br> <span class="text-slate-400 font-normal">${p.pareja ? `Pareja: ${p.pareja}` : 'Solo/a'}</span>
+          </td>
+          <td class="p-3 text-xs text-slate-600">${p.dias.join(', ')}<br>${p.horario}</td>
+          <td class="p-3 text-xs font-semibold text-blue-700">${p.lugar}</td>
+          <td class="p-3 text-right">
+            <button onclick="aprobarTurno(${p.id})" class="bg-green-600 text-white font-bold px-2.5 py-1 rounded-lg text-xs hover:bg-green-700 mr-1">Aprobar</button>
+            <button onclick="rechazarTurno(${p.id})" class="bg-red-500 text-white font-bold px-2.5 py-1 rounded-lg text-xs hover:bg-red-600">Rechazar</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function aprobarTurno(id) {
+      const turno = solicitudesBD.find(s => s.id === id);
+      if (turno) {
+        turno.estado = "Aprobado";
+        alert("¡Turno aprobado correctamente!");
+        cargarPendientesAdmin();
+        cargarHorariosFiltrados();
       }
     }
 
-    window.limpiarRegistros = function() {
-      if (confirm("¿Vaciar todas las asignaciones de la base de datos de manera definitiva?")) {
-        remove(ref(db, 'turnos_metropolitanos'))
-          .then(() => alert("Base de datos limpia."));
-      }
+    function rechazarTurno(id) {
+      solicitudesBD = solicitudesBD.filter(s => s.id !== id);
+      alert("Solicitud rechazada.");
+      cargarPendientesAdmin();
+      cargarHorariosFiltrados();
     }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      // Por defecto carga Etapas en el buscador izquierdo
+      actualizarFiltroLugares("etapas");
+      // Por defecto carga Etapas en el formulario derecho
+      actualizarLugaresFormulario("etapas");
+    });
   </script>
 </body>
 </html>
